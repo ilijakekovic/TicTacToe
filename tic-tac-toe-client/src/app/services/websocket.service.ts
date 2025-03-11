@@ -13,6 +13,7 @@ export class WebsocketService {
     this.socket = io(this.serverUrl);
   }
 
+  // Join a game room
   joinGame(gameId: string) {
     this.socket.emit('join', gameId);
   }
@@ -22,6 +23,16 @@ export class WebsocketService {
     return new Observable(observer => {
       this.socket.on('gameState', (state) => {
         observer.next(state);
+      });
+    });
+  }
+
+  // Get available rooms
+  getAvailableRooms(): Observable<string[]> {
+    return new Observable(observer => {
+      this.socket.emit('getAvailableRooms');
+      this.socket.on('availableRooms', (rooms: string[]) => {
+        observer.next(rooms);
       });
     });
   }

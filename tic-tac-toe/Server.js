@@ -26,22 +26,33 @@ server.listen(PORT, () => {
 
 let games = {}; // Stores active games
 
+
 io.on('connection', (socket) => {
     console.log(`User Connected: ${Socket.id}`);
 
-    //Player joins a room
-    socket.on('joinGame', (room) => {
-        Socket.join(room);
-        console.log(`Player joined room: ${room}`);
+    // List all available rooms
+    socket.on('getAvailableRooms', () => {
+        const availableRooms = Object.keys(games).filter(room => games[room].players.length < 2);
+        socket.emit('availableRooms', availableRooms);
+    });
 
-        //Check if the room exists, else create a new game state
-        if(!games[room]){
-            games[room] = { board: Array(9).fill(null), turn: 'X', players: []};
-        }
+   // Player joins a game room
+   socket.on('joinGame', (room) => {
+    socket.join(room);
+    console.log(`Player joined room: ${room}`);
 
-        if(games[room].players.lenght < 2) {
-            games[room].players.push(Socket.id);
-        }
+    // Check if the room exists, else create a new game state
+    if (!games[room]) {
+        games[room] = { board: Array(9).fill(null), turn: 'X', players: [] };
+    }
+
+    // Add player if room isn't full
+    if (games[room].players.length < 2) {
+        games[room].players.push(socket.id);
+    }
+
+    // Send game state to the player
+    io.to(room).emit('gameState', games[room]);
     });
 
     //Handle player moves

@@ -1,0 +1,16 @@
+<div class="room-selection-container">
+    <h2>Select a Room</h2>
+    
+    <div *ngIf="availableRooms.length > 0">
+      <ul>
+        <li *ngFor="let room of availableRooms" (click)="joinRoom(room)">
+          {{ room }}
+        </li>
+      </ul>
+    </div>
+  
+    <div *ngIf="availableRooms.length === 0">
+      <p>No available rooms. Please try again later.</p>
+    </div>
+  </div>
+  
