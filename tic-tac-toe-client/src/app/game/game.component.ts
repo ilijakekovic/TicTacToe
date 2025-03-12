@@ -16,6 +16,8 @@ export class GameComponent implements OnInit, OnDestroy {
   currentTurn: string = 'X';
   room: string = '';
   userCount: number = 0;
+  playerSymbol: string = '';
+  gameResult: string = '';
 
   constructor(private websocketService: WebsocketService, private route: ActivatedRoute) {}
 
@@ -27,17 +29,30 @@ export class GameComponent implements OnInit, OnDestroy {
     this.websocketService.onGameState().subscribe((state: any) => {
       this.board = state.board;
       this.currentTurn = state.turn;
+      const socketId = this.websocketService.socket?.id;
+      if (socketId) {
+        this.playerSymbol = state.playerSymbols[socketId];
+      }
     });
 
     // Listen for user count updates
     this.websocketService.onUserCount().subscribe((count: number) => {
       this.userCount = count;
     });
+
+    // Listen for game result updates
+    this.websocketService.onGameResult().subscribe((result: any) => {
+      if (result.winner === this.playerSymbol) {
+        this.gameResult = 'You win!';
+      } else {
+        this.gameResult = 'You lose!';
+      }
+    });
   }
 
   makeMove(index: number) {
     console.log(`Making move at index ${index}`);
-    if (!this.board[index]) {
+    if (!this.board[index] && this.currentTurn === this.playerSymbol) {
       this.websocketService.makeMove(this.room, index);
     }
   }

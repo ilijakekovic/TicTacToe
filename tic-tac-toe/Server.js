@@ -24,6 +24,22 @@ server.listen(PORT, () => {
 
 let games = {}; // Stores active games
 
+function checkWin(board) {
+    const winPatterns = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+        [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+        [0, 4, 8], [2, 4, 6]             // Diagonals
+    ];
+
+    for (const pattern of winPatterns) {
+        const [a, b, c] = pattern;
+        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+            return board[a];
+        }
+    }
+    return null;
+}
+
 io.on('connection', (socket) => {
     console.log(`User Connected: ${socket.id}`);
 
@@ -48,6 +64,13 @@ io.on('connection', (socket) => {
             games[room].players.push(socket.id);
         }
 
+        // Assign player symbols
+        if (games[room].players.length === 1) {
+            games[room].playerSymbols = { [socket.id]: 'X' };
+        } else if (games[room].players.length === 2) {
+            games[room].playerSymbols[socket.id] = 'O';
+        }
+
         // Send game state to the player
         io.to(room).emit('gameState', games[room]);
 
@@ -56,15 +79,21 @@ io.on('connection', (socket) => {
     });
 
     // Handle player moves
-    socket.on('makeMove', ({room, index}) => {
-        console.log(`Player - ${socket.id} - made a move in room: ${room} at index: ${index}`);
+    socket.on('makeMove', ({ room, index }) => {
+        console.log(`Received makeMove event from player ${socket.id} in room ${room} at index ${index}`);
         const game = games[room];
 
-        if (game && game.board[index] === null && game.players.includes(socket.id)) {
+        if (game && game.board[index] === null && game.players.includes(socket.id) && game.turn === game.playerSymbols[socket.id]) {
             game.board[index] = game.turn;
             game.turn = game.turn === 'X' ? 'O' : 'X';
 
-            io.to(room).emit('gameState', game);
+            const winner = checkWin(game.board);
+            if (winner) {
+                io.to(room).emit('gameState', game);
+                io.to(room).emit('gameResult', { winner });
+            } else {
+                io.to(room).emit('gameState', game);
+            }
         } else {
             console.log(`Invalid move by player ${socket.id} in room ${room} at index ${index}`);
         }
@@ -72,7 +101,6 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         console.log(`User Disconnected: ${socket.id}`);
-console.log(`User Count: ${Object.keys(io.sockets.sockets).length}`);
 
         // Remove the player from the game
         for (const room in games) {
@@ -91,7 +119,7 @@ console.log(`User Count: ${Object.keys(io.sockets.sockets).length}`);
         if (games[roomName]) {
             socket.emit('roomExists', roomName); // Room already exists
         } else {
-            games[roomName] = { board: Array(9).fill(null), turn: 'X', players: [socket.id] }; // Create new room
+            games[roomName] = { board: Array(9).fill(null), turn: 'X', players: [socket.id], playerSymbols: { [socket.id]: 'X' } }; // Create new room
             socket.join(roomName);
             socket.emit('roomCreated', roomName); // Inform client room was created
             io.to(roomName).emit('userCount', games[roomName].players.length); // Emit the number of connected users

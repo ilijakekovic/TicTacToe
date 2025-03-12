@@ -6,7 +6,7 @@ import { io, Socket } from 'socket.io-client';
   providedIn: 'root'
 })
 export class WebsocketService {
-  private socket: Socket;
+  public socket: Socket;
   private serverUrl = 'http://localhost:5000'; // !!! Update this for production
 
   constructor() { 
@@ -23,6 +23,15 @@ export class WebsocketService {
     return new Observable(observer => {
       this.socket.on('gameState', (state) => {
         observer.next(state);
+      });
+    });
+  }
+
+  // Listen for game result updates
+  onGameResult(): Observable<any> {
+    return new Observable(observer => {
+      this.socket.on('gameResult', (result) => {
+        observer.next(result);
       });
     });
   }
