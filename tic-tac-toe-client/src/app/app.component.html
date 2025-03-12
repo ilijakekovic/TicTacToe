@@ -1,12 +1,11 @@
 <nav class="navbar">
   <div class="navbar-left">
-    <a routerLink="/room-selection" routerLinkActive="active">Room Selection</a>
-    <a routerLink="/room-creation" routerLinkActive="active">Room Creation</a>
+    <a href="/room-selection" routerLinkActive="active">Room Selection</a>
+    <a href="/room-creation" routerLinkActive="active">Room Creation</a>
     <button *ngIf="username" (click)="logout()">Logout</button>
   </div>
   <div class="navbar-right">
     <span *ngIf="username">{{ username }}</span>
-    <a *ngIf="!!username" routerLink="/login" routerLinkActive="active">Login</a>
   </div>
 </nav>
 <router-outlet></router-outlet>

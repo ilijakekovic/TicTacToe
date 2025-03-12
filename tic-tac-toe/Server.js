@@ -128,6 +128,7 @@ io.on('connection', (socket) => {
             } else {
                 // Emit the updated number of connected users
                 io.to(room).emit('userCount', games[room].players.length);
+                console.log(`Player ${socket.id} left room ${room}`);
             }
         }
     });

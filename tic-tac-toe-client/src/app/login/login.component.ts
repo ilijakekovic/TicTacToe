@@ -15,6 +15,14 @@ export class LoginComponent {
 
   constructor(private router: Router) {}
 
+  ngOnInit(): void {
+    const username = localStorage.getItem('username');
+    if (username) {
+      this.username = username;
+      this.router.navigate(['/room-selection']);
+    }
+  }
+
   login() {
     if (this.username.trim()) {
       localStorage.setItem('username', this.username);
