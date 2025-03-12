@@ -1,0 +1,20 @@
+.room-creation-container {
+    text-align: center;
+  }
+  
+  input {
+    padding: 8px;
+    font-size: 1rem;
+    margin: 10px;
+  }
+  
+  button {
+    padding: 10px;
+    font-size: 1rem;
+  }
+  
+  .error-message {
+    color: red;
+    margin-top: 10px;
+  }
+  

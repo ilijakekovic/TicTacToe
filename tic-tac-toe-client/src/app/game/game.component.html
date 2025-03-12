@@ -1,10 +1,9 @@
 <div class="game-container">
-    <h2>Tic-Tac-Toe</h2>
-    <h3>Current Turn: {{ currentTurn }}</h3>
-    <div class="board">
-      <button *ngFor="let cell of board; let i = index" (click)="makeMove(i)">
-        {{ cell }}
-      </button>
+  <h2>Game Room: {{ room }}</h2>
+  <p>Connected Users: {{ userCount }}</p>
+  <div class="board">
+    <div *ngFor="let cell of board; let i = index" (click)="makeMove(i)">
+      {{ cell }}
     </div>
   </div>
-  
+</div>

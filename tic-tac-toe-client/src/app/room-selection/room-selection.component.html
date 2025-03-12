@@ -1,16 +1,19 @@
 <div class="room-selection-container">
-    <h2>Select a Room</h2>
-    
-    <div *ngIf="availableRooms.length > 0">
-      <ul>
-        <li *ngFor="let room of availableRooms" (click)="joinRoom(room)">
-          {{ room }}
-        </li>
-      </ul>
-    </div>
+  <h2>Select a Room</h2>
   
-    <div *ngIf="availableRooms.length === 0">
-      <p>No available rooms. Please try again later.</p>
-    </div>
+  <div *ngIf="availableRooms.length > 0">
+    <ul>
+      <li *ngFor="let room of availableRooms">
+        <a (click)="joinRoom(room)">{{ room }}</a>
+      </li>
+    </ul>
   </div>
-  
+
+  <div *ngIf="availableRooms.length === 0">
+    <p>No available rooms. Please try again later.</p>
+  </div>
+
+  <div>
+    <a [routerLink]="['/room-creation']">Create a Room</a>
+  </div>
+</div>
