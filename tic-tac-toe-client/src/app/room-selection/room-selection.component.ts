@@ -11,15 +11,16 @@ import { RouterModule, Router } from '@angular/router';
   styleUrls: ['./room-selection.component.css']
 })
 export class RoomSelectionComponent implements OnInit {
-  availableRooms: string[] = [];
+  rooms: { name: string, status: string, playerCount: number }[] = [];
   selectedRoom: string = '';
   
   constructor(private websocketService: WebsocketService, private router: Router) {}
 
   ngOnInit(): void {
-    // Get available rooms when the component initializes
-    this.websocketService.getAvailableRooms().subscribe(rooms => {
-      this.availableRooms = rooms;
+    // Get all rooms when the component initializes
+    this.websocketService.getAllRooms().subscribe(rooms => {
+      console.log('Rooms received in component:', rooms); // Add logging to debug
+      this.rooms = rooms;
     });
   }
 
@@ -29,5 +30,9 @@ export class RoomSelectionComponent implements OnInit {
       this.websocketService.joinGame(room);
       this.router.navigate(['/game', room]);
     }
+  }
+
+  spectateRoom(room: string) {
+    this.router.navigate(['/game', room]);
   }
 }

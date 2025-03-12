@@ -49,6 +49,17 @@ io.on('connection', (socket) => {
         socket.emit('availableRooms', availableRooms);
     });
 
+    // List all rooms with their statuses
+    socket.on('getAllRooms', () => {
+        const allRooms = Object.keys(games).map(room => {
+            const game = games[room];
+            const status = game.players.length === 2 ? 'Playing' : 'Waiting';
+            return { name: room, status, playerCount: game.players.length };
+        });
+        console.log('Emitting all rooms:', allRooms); // Add logging to debug
+        socket.emit('allRooms', allRooms);
+    });
+
     // Player joins a game room
     socket.on('joinGame', (room) => {
         socket.join(room);
@@ -80,13 +91,10 @@ io.on('connection', (socket) => {
 
     // Handle player moves
     socket.on('makeMove', ({ room, index }) => {
+        console.log(`Received makeMove event from player ${socket.id} in room ${room} at index ${index}`);
         const game = games[room];
 
-        if (game && game.board[index] === null 
-            && game.players.includes(socket.id) 
-            && game.turn === game.playerSymbols[socket.id]
-            && game.players.length === 2
-            && !checkWin(game.board)) {
+        if (game && game.board[index] === null && game.players.includes(socket.id) && game.turn === game.playerSymbols[socket.id]) {
             game.board[index] = game.turn;
             game.turn = game.turn === 'X' ? 'O' : 'X';
 

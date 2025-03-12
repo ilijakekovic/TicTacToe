@@ -36,11 +36,12 @@ export class WebsocketService {
     });
   }
 
-  // Get available rooms
-  getAvailableRooms(): Observable<string[]> {
+  // Get all rooms
+  getAllRooms(): Observable<{ name: string, status: string, playerCount: number }[]> {
     return new Observable(observer => {
-      this.socket.emit('getAvailableRooms');
-      this.socket.on('availableRooms', (rooms: string[]) => {
+      this.socket.emit('getAllRooms');
+      this.socket.on('allRooms', (rooms: { name: string, status: string, playerCount: number }[]) => {
+        console.log('Received all rooms:', rooms); // Add logging to debug
         observer.next(rooms);
       });
     });
