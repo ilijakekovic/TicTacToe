@@ -37,7 +37,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
   makeMove(index: number) {
     console.log(`Making move at index ${index}`);
-    if (!this.board[index] && this.currentTurn === 'X') {
+    if (!this.board[index]) {
       this.websocketService.makeMove(this.room, index);
     }
   }

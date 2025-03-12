@@ -57,19 +57,22 @@ io.on('connection', (socket) => {
 
     // Handle player moves
     socket.on('makeMove', ({room, index}) => {
+        console.log(`Player - ${socket.id} - made a move in room: ${room} at index: ${index}`);
         const game = games[room];
 
-        if(game && game.board[index] === null && game.players.includes(socket.id)){
+        if (game && game.board[index] === null && game.players.includes(socket.id)) {
             game.board[index] = game.turn;
             game.turn = game.turn === 'X' ? 'O' : 'X';
 
             io.to(room).emit('gameState', game);
+        } else {
+            console.log(`Invalid move by player ${socket.id} in room ${room} at index ${index}`);
         }
     });
 
     socket.on('disconnect', () => {
         console.log(`User Disconnected: ${socket.id}`);
-        console.log(`Remaining Connections: ${Object.keys(io.sockets.sockets).length}`);
+console.log(`User Count: ${Object.keys(io.sockets.sockets).length}`);
 
         // Remove the player from the game
         for (const room in games) {

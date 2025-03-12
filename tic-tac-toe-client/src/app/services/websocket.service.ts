@@ -39,6 +39,7 @@ export class WebsocketService {
 
   // Make a move
   makeMove(room: string, index: number) {
+    console.log(`Service - Sending makeMove event for room ${room} at index ${index}`);
     this.socket.emit('makeMove', { room, index });
   }
 
