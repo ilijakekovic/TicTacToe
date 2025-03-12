@@ -22,7 +22,7 @@ export class RoomCreationComponent {
       this.websocketService.createRoom(this.roomName).subscribe({
         next: (room) => {
           // If room is created successfully, redirect to the game
-          this.router.navigate(['/game'], { queryParams: { room: room } });
+          this.router.navigate(['/game', room]);
         },
         error: (err) => {
           this.errorMessage = err;

@@ -26,7 +26,7 @@ export class GameComponent implements OnInit, OnDestroy {
     // Listen for game state updates
     this.websocketService.onGameState().subscribe((state: any) => {
       this.board = state.board;
-      this.currentTurn = state.currentTurn;
+      this.currentTurn = state.turn;
     });
 
     // Listen for user count updates

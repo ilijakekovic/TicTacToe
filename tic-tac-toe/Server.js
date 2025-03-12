@@ -69,7 +69,7 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         console.log(`User Disconnected: ${socket.id}`);
-        console.log(`Remaining users: ${Object.keys(io.sockets.sockets).length}`);
+        console.log(`Remaining Connections: ${Object.keys(io.sockets.sockets).length}`);
 
         // Remove the player from the game
         for (const room in games) {
