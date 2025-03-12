@@ -13,10 +13,16 @@ import { RouterModule, Router } from '@angular/router';
 export class RoomSelectionComponent implements OnInit {
   rooms: { name: string, status: string, playerCount: number }[] = [];
   selectedRoom: string = '';
-  
+  username: string = '';
+
   constructor(private websocketService: WebsocketService, private router: Router) {}
 
   ngOnInit(): void {
+    this.username = localStorage.getItem('username') || '';
+    if (!this.username) {
+      this.router.navigate(['/login']);
+    }
+
     // Get all rooms when the component initializes
     this.websocketService.getAllRooms().subscribe(rooms => {
       console.log('Rooms received in component:', rooms); // Add logging to debug

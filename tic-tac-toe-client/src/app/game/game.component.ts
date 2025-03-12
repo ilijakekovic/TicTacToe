@@ -4,8 +4,6 @@ import { WebsocketService } from '../services/websocket.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-
-
 @Component({
   selector: 'app-game',
   standalone: true,
@@ -23,10 +21,18 @@ export class GameComponent implements OnInit, OnDestroy {
   gameResult: string = '';
   chatMessages: { sender: string, message: string, timeStamp: string }[] = [];
   newMessage: string = '';
+  username: string = '';
 
   constructor(private websocketService: WebsocketService, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
+    this.username = localStorage.getItem('username') || '';
+    if (!this.username) {
+      alert('Username not found. Redirecting to login.');
+      window.location.href = '/login';
+      return;
+    }
+
     this.room = this.route.snapshot.paramMap.get('room') || 'game1';
     this.websocketService.joinGame(this.room);
     
@@ -69,7 +75,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
   sendMessage() {
     if (this.newMessage.trim()) {
-      this.websocketService.sendMessage(this.room, this.newMessage, this.playerSymbol);
+      this.websocketService.sendMessage(this.room, this.newMessage, this.username);
       this.newMessage = '';
     }
   }
