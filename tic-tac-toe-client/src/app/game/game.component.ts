@@ -2,11 +2,14 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { WebsocketService } from '../services/websocket.service';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
+
 
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.css']
 })
@@ -18,6 +21,8 @@ export class GameComponent implements OnInit, OnDestroy {
   userCount: number = 0;
   playerSymbol: string = '';
   gameResult: string = '';
+  chatMessages: { sender: string, message: string, timeStamp: string }[] = [];
+  newMessage: string = '';
 
   constructor(private websocketService: WebsocketService, private route: ActivatedRoute) {}
 
@@ -48,12 +53,24 @@ export class GameComponent implements OnInit, OnDestroy {
         this.gameResult = 'You lose!';
       }
     });
+
+    // Listen for chat messages
+    this.websocketService.listenForMessages().subscribe((message) => {
+      this.chatMessages.push(message);
+    });
   }
 
   makeMove(index: number) {
     console.log(`Making move at index ${index}`);
     if (!this.board[index] && this.currentTurn === this.playerSymbol) {
       this.websocketService.makeMove(this.room, index);
+    }
+  }
+
+  sendMessage() {
+    if (this.newMessage.trim()) {
+      this.websocketService.sendMessage(this.room, this.newMessage, this.playerSymbol);
+      this.newMessage = '';
     }
   }
 

@@ -80,10 +80,13 @@ io.on('connection', (socket) => {
 
     // Handle player moves
     socket.on('makeMove', ({ room, index }) => {
-        console.log(`Received makeMove event from player ${socket.id} in room ${room} at index ${index}`);
         const game = games[room];
 
-        if (game && game.board[index] === null && game.players.includes(socket.id) && game.turn === game.playerSymbols[socket.id]) {
+        if (game && game.board[index] === null 
+            && game.players.includes(socket.id) 
+            && game.turn === game.playerSymbols[socket.id]
+            && game.players.length === 2
+            && !checkWin(game.board)) {
             game.board[index] = game.turn;
             game.turn = game.turn === 'X' ? 'O' : 'X';
 
@@ -97,6 +100,13 @@ io.on('connection', (socket) => {
         } else {
             console.log(`Invalid move by player ${socket.id} in room ${room} at index ${index}`);
         }
+    });
+
+    // Handle chat messages
+    socket.on('sendMessage', ({ room, message, sender }) => {
+        const timeStamp = new Date().toLocaleTimeString();
+        const chatMessage = { sender, message, timeStamp };
+        io.to(room).emit('receiveMessage', chatMessage);
     });
 
     socket.on('disconnect', () => {

@@ -82,4 +82,18 @@ export class WebsocketService {
       });
     });
   }
+
+  // Send a chat message
+  sendMessage(room: string, message: string, sender: string) {
+    this.socket.emit('sendMessage', { room, message, sender });
+  }
+
+  // Listen for chat messages
+  listenForMessages(): Observable<{ sender: string, message: string, timeStamp: string }> {
+    return new Observable(observer => {
+      this.socket.on('receiveMessage', (chatMessage) => {
+        observer.next(chatMessage);
+      });
+    });
+  }
 }

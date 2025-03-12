@@ -7,4 +7,15 @@
     </button>
   </div>
   <p *ngIf="gameResult">{{ gameResult }}</p>
+
+  <div class="chat-container">
+    <h3>Chat</h3>
+    <div class="chat-messages">
+      <div *ngFor="let message of chatMessages">
+        <strong>{{ message.sender }}:</strong> {{ message.message }} <em>{{ message.timeStamp }}</em>
+      </div>
+    </div>
+    <input [(ngModel)]="newMessage" placeholder="Type a message" (keydown.enter)="sendMessage()"/>
+    <button (click)="sendMessage()">Send</button>
+  </div>
 </div>
