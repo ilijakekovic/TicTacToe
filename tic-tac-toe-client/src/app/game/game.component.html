@@ -2,8 +2,8 @@
   <h2>Game Room: {{ room }}</h2>
   <p>Connected Users: {{ userCount }}</p>
   <div class="board">
-    <div *ngFor="let cell of board; let i = index" (click)="makeMove(i)">
+    <button *ngFor="let cell of board; let i = index" (click)="makeMove(i)">
       {{ cell }}
-    </div>
+    </button>
   </div>
 </div>
